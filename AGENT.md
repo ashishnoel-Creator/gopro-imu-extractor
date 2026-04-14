@@ -20,6 +20,8 @@ timestamp, accl_x, accl_y, accl_z, gyro_x, gyro_y, gyro_z
 
 This format is directly compatible with **Ego4D, Epic-Kitchens, Assembly101, and Project Aria** egocentric vision pipelines.
 
+**Works on all GoPro generations:** Hero 5–10 (matched 200 Hz IMU) and Hero 11/12/13 (200 Hz accel + 1600 Hz gyro). For newer GoPros, the gyroscope is automatically interpolated onto the accelerometer timeline so the output is always a clean, paired ~200 Hz CSV.
+
 ---
 
 ## Project Structure
@@ -38,13 +40,9 @@ gopro-imu-extractor/
 
 ## Setup (Run Once)
 
-Before first use, install dependencies:
+No Python packages are required — `extract.py` uses only the standard library.
 
-```bash
-pip install -r requirements.txt
-```
-
-Also requires **ffmpeg** to be installed and available in PATH:
+You only need **ffmpeg** (and `ffprobe`) installed and available in PATH:
 - macOS: `brew install ffmpeg`
 - Ubuntu/Debian: `sudo apt install ffmpeg`
 - Windows: Download from https://ffmpeg.org/download.html
@@ -136,8 +134,8 @@ Each video file has a matching `_imu_200hz.csv` with the **same name prefix**. T
 | Problem | Solution |
 |---------|----------|
 | "No MP4 files found" | Place GoPro .MP4 files in the `input/` folder |
-| "gopro-overlay not installed" | Run `pip install -r requirements.txt` |
 | "ffmpeg not found" | Install ffmpeg (see Setup section above) |
+| "No GPMF (gpmd) data stream found" | Video isn't from a GoPro, or telemetry was disabled |
 | "No IMU data found" | File may not be from a GoPro, or telemetry was disabled during recording |
 | Script crashes on large files | Ensure enough disk space (output ≈ input size) |
 

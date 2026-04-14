@@ -5,9 +5,12 @@ Extract 6-DOF IMU data (accelerometer + gyroscope) from GoPro videos in Ego4D-st
 ## What It Does
 
 - Extracts **accelerometer** (m/s²) and **gyroscope** (rad/s) data at **~200 Hz**
+- Works on **all GoPro generations** — Hero 5–10 (matched 200 Hz IMU) **and** Hero 11/12/13 (200 Hz accel + 1600 Hz gyro, auto-resampled)
 - Strips **audio** from all output videos
 - Optionally **clips** videos into fixed-duration segments with matching IMU files
 - Outputs **Ego4D-compatible CSVs** ready for egocentric AI training pipelines
+- Built-in **sanity checks** (sample rate, gravity magnitude, NaN/Inf, time gaps)
+- **Zero Python dependencies** beyond the standard library — only `ffmpeg` is required
 
 ## Quick Start
 
@@ -15,7 +18,7 @@ Extract 6-DOF IMU data (accelerometer + gyroscope) from GoPro videos in Ego4D-st
 # 1. Clone and install
 git clone <your-repo-url>
 cd gopro-imu-extractor
-pip install -r requirements.txt
+# (no pip install needed — stdlib only; just make sure ffmpeg is installed)
 
 # 2. Place GoPro MP4 files in the input folder
 cp /path/to/your/GoPro/*.MP4 input/
@@ -55,8 +58,18 @@ Compatible with: **Ego4D**, **Epic-Kitchens**, **Assembly101**, **Project Aria**
 ## Requirements
 
 - Python 3.10+
-- ffmpeg (installed and in PATH)
-- Dependencies: `pip install -r requirements.txt`
+- ffmpeg + ffprobe (installed and in PATH)
+- No Python packages required (uses only the standard library)
+
+## How It Handles Different GoPro Generations
+
+Older GoPros (Hero 5–10) sample both accelerometer and gyroscope at ~200 Hz, so
+each accel sample already has a matching gyro sample. Newer GoPros (Hero 11/12/13)
+sample the gyroscope at ~1600 Hz while keeping the accelerometer at ~200 Hz.
+
+This tool auto-detects the rates, **linearly interpolates the gyroscope onto the
+accelerometer timestamps**, and emits a clean 1:1 paired CSV at ~200 Hz — the
+format expected by Ego4D and similar pipelines. No flags or configuration needed.
 
 ## Important
 

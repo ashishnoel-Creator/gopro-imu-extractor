@@ -1,1 +1,2 @@
-gopro-overlay>=0.128.0
+# No Python packages required — extract.py uses only the standard library.
+# You only need ffmpeg + ffprobe installed and available in PATH.
